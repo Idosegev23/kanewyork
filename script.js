@@ -370,8 +370,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const startDateTime = formatDate(startDate);
         const endDateTime = formatDate(endDate);
         const title = encodeURIComponent(`CXpert AI Workshop: ${workshop.title}`);
-        const location = encodeURIComponent('CXpert Innovation Center, Tel Aviv');
-        const details = encodeURIComponent(`This is a confirmation for ${attendeeName}'s registration to ${workshop.title} workshop.`);
+        const location = encodeURIComponent('Zoom');
+        const details = encodeURIComponent(`This is a confirmation for ${attendeeName}'s registration to ${workshop.title} workshop. Link will be provided closer to the date.`);
         
         // יצירת קישור ל-Google Calendar
         return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
