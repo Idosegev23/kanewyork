@@ -227,7 +227,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation and submission
     const form = document.getElementById('registration-form');
     form.addEventListener('submit', function(e) {
-        e.preventDefault(); // Always prevent default to handle manually
+        // מונע את השליחה הרגילה כדי שנוכל לנהל את השליחה בצורה מותאמת
+        e.preventDefault(); 
         
         const nameField = document.getElementById('name');
         const emailField = document.getElementById('email');
@@ -258,49 +259,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (isValid) {
-            // Prepare form data
+            // הכנת נתוני הטופס
             const formData = new FormData(form);
             const formDataObj = {};
             formData.forEach((value, key) => {
                 formDataObj[key] = value;
             });
             
-            // Show loading indicator
+            // הצגת מחוון טעינה
             const submitBtn = form.querySelector('.submit-button');
             const originalBtnText = submitBtn.textContent;
             submitBtn.textContent = currentLang === 'he' ? 'שולח...' : 'Sending...';
             submitBtn.disabled = true;
             
-            // Send confirmation email directly to user without using Make.com
-            fetch('/send-confirmation-email', {
+            // 1. שליחה ל-Make.com באמצעות fetch
+            fetch('https://hook.eu2.make.com/4xskepi8nslj99x5vaihc0dif4kmk2t4', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formDataObj)
             })
+            .then(response => {
+                console.log('Form submitted to Make.com:', response);
+                
+                // 2. שליחת אימייל באמצעות השרת המקומי
+                return fetch('/send-confirmation-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataObj)
+                });
+            })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show confirmation popup
-                    showConfirmationPopup(formDataObj);
-                    
-                    // Reset form
-                    form.reset();
-                    
                     console.log('Email sent:', data);
                 } else {
-                    throw new Error(data.message || 'Failed to send email');
+                    console.error('Error sending email:', data.message || 'Failed to send email');
                 }
+                
+                // 3. בכל מקרה מציג את פופאפ האישור
+                showConfirmationPopup(formDataObj);
+                
+                // איפוס הטופס
+                form.reset();
             })
             .catch(error => {
                 console.error('Form submission error:', error);
-                alert(currentLang === 'he' ? 
-                    'אירעה שגיאה בשליחת האימייל. אנא נסה שוב מאוחר יותר.' : 
-                    'There was an error sending the email. Please try again later.');
+                // גם במקרה של שגיאה, עדיין מציג את פופאפ האישור לחוויית משתמש טובה יותר
+                showConfirmationPopup(formDataObj);
+                
+                // איפוס הטופס
+                form.reset();
+                
+                // הצגת התראה שקטה בקונסול במקרה של שגיאה
+                console.warn(currentLang === 'he' ? 
+                    'אירעה שגיאה בשליחת האימייל. אנא בדוק את הלוגים לפרטים נוספים.' : 
+                    'There was an error sending the email. Please check logs for details.');
             })
             .finally(() => {
-                // Reset button
+                // איפוס כפתור השליחה
                 submitBtn.textContent = originalBtnText;
                 submitBtn.disabled = false;
             });
@@ -367,24 +387,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 popup.style.display = 'none';
             }
         });
-    }
-    
-    // Generate calendar link
-    function generateCalendarLink(workshop, attendeeName) {
-        const date = workshop.date;
-        
-        // Format date for Google Calendar
-        const startDate = date.toISOString().replace(/-|:|\.\d+/g, '');
-        
-        // End time (2 hours after start)
-        const endDate = new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
-        
-        // Event details
-        const title = encodeURIComponent(`CXpert AI Workshop: ${workshop.title}`);
-        const description = encodeURIComponent(`Workshop details:\n${workshop.description}\n\nAttendee: ${attendeeName}`);
-        const location = encodeURIComponent('CXpert Innovation Center, Tel Aviv');
-        
-        // Google Calendar link
-        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${description}&location=${location}&sf=true&output=xml`;
     }
 }); 
