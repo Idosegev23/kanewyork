@@ -283,28 +283,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 console.log('Form submitted to Make.com:', response);
                 
-                // 2. שליחת אימייל באמצעות השרת המקומי
-                return fetch('/send-confirmation-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formDataObj)
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Email sent:', data);
-                } else {
-                    console.error('Error sending email:', data.message || 'Failed to send email');
-                }
-                
-                // 3. בכל מקרה מציג את פופאפ האישור
+                // 2. במקום לנסות לשלוח למייל, פשוט נציג את הפופאפ
+                // כי שרת המקומי לא פועל (server.js ו-package.json נמחקו)
                 showConfirmationPopup(formDataObj);
                 
                 // איפוס הטופס
                 form.reset();
+                
+                return response;
             })
             .catch(error => {
                 console.error('Form submission error:', error);
@@ -313,11 +299,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // איפוס הטופס
                 form.reset();
-                
-                // הצגת התראה שקטה בקונסול במקרה של שגיאה
-                console.warn(currentLang === 'he' ? 
-                    'אירעה שגיאה בשליחת האימייל. אנא בדוק את הלוגים לפרטים נוספים.' : 
-                    'There was an error sending the email. Please check logs for details.');
             })
             .finally(() => {
                 // איפוס כפתור השליחה
@@ -338,6 +319,29 @@ document.addEventListener('DOMContentLoaded', function() {
     function isValidEmail(email) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
+    }
+    
+    // פונקציה ליצירת קישור להוספה ליומן 
+    function generateCalendarLink(workshop, attendeeName) {
+        // יוצר תאריך התחלה וסיום לאירוע
+        const startDate = workshop.date;
+        const endDate = new Date(startDate);
+        endDate.setHours(startDate.getHours() + 2); // סדנה בת שעתיים
+        
+        // פורמט תאריכים ל-Google Calendar
+        const formatDate = (date) => {
+            return date.toISOString().replace(/-|:|\.\d+/g, '');
+        };
+        
+        // פרטי האירוע
+        const startDateTime = formatDate(startDate);
+        const endDateTime = formatDate(endDate);
+        const title = encodeURIComponent(`CXpert AI Workshop: ${workshop.title}`);
+        const location = encodeURIComponent('CXpert Innovation Center, Tel Aviv');
+        const details = encodeURIComponent(`This is a confirmation for ${attendeeName}'s registration to ${workshop.title} workshop.`);
+        
+        // יצירת קישור ל-Google Calendar
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateTime}/${endDateTime}&details=${details}&location=${location}`;
     }
     
     // Show confirmation popup
