@@ -283,21 +283,54 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 console.log('Form submitted to Make.com:', response);
                 
-                // 2. במקום לנסות לשלוח למייל, פשוט נציג את הפופאפ
-                // כי שרת המקומי לא פועל (server.js ו-package.json נמחקו)
+                // 2. שליחת אימייל באמצעות השרת המקומי
+                // אם השליחה ל-Make הצליחה, ננסה לשלוח אימייל
+                if (response.ok) { // או כל תנאי אחר שמעיד על הצלחה מ-Make.com
+                    return fetch('/send-confirmation-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formDataObj)
+                    });
+                } else {
+                    // אם השליחה ל-Make נכשלה, נזרוק שגיאה כדי לדלג על שליחת המייל
+                    // אבל עדיין להציג את הפופאפ ב-catch
+                    return response.text().then(text => { 
+                        throw new Error('Make.com submission failed: ' + text);
+                    });
+                }
+            })
+            .then(emailResponse => {
+                // רק אם הקריאה לשרת המקומי התבצעה והצליחה
+                if (emailResponse && emailResponse.ok) {
+                    return emailResponse.json();
+                } else if (emailResponse) {
+                    // אם הייתה תגובה מהשרת אך היא לא הצלחה
+                    return emailResponse.text().then(text => {
+                         console.error('Error response from email server:', text);
+                         // החזרת אובייקט שמציין כישלון בשליחת המייל אבל לא עוצר את הצגת הפופאפ
+                         return { success: false, message: 'Email server responded with an error: ' + text }; 
+                    });
+                }
+                // אם לא הייתה קריאה לשרת (למשל כי Make.com נכשל)
+                return { success: false, message: 'Email not sent due to Make.com failure.', makeFailure: true }; 
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('Email sent successfully:', data);
+                } else if (!data.makeFailure) { // אל תציג שגיאת אימייל אם הכישלון היה ב-Make
+                    console.error('Failed to send email:', data.message);
+                }
+                
+                // 3. הצגת פופאפ אישור בכל מקרה (הצלחה או כישלון של המייל)
                 showConfirmationPopup(formDataObj);
-                
-                // איפוס הטופס
                 form.reset();
-                
-                return response;
             })
             .catch(error => {
-                console.error('Form submission error:', error);
-                // גם במקרה של שגיאה, עדיין מציג את פופאפ האישור לחוויית משתמש טובה יותר
+                console.error('Form submission process error:', error);
+                // הצג פופאפ גם במקרה של שגיאה בתהליך
                 showConfirmationPopup(formDataObj);
-                
-                // איפוס הטופס
                 form.reset();
             })
             .finally(() => {

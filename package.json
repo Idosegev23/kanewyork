@@ -1,0 +1,21 @@
+{
+  "name": "cxpert-ai-workshop-registration",
+  "version": "1.0.0",
+  "description": "Server for sending registration confirmation emails for CXpert AI workshops.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 
