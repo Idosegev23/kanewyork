@@ -100,11 +100,11 @@ app.post('/send-confirmation-email', async (req, res) => {
                 <h2>פרטי הסדנה:</h2>
                 <div class="detail-item"><strong>סדנה:</strong> ${userData.workshop}</div>
                 <div class="detail-item"><strong>תאריך ושעה:</strong> ${formattedDate} (שעון ניו ג\'רסי)</div>
-                <div class="detail-item"><strong>מיקום:</strong> מרכז החדשנות CXpert, תל אביב (פרטים נוספים יישלחו בהמשך)</div>
+                <div class="detail-item"><strong>מיקום:</strong> זום בלבד (קישור יישלח בסמוך למועד הסדנה)</div>
                 <div class="detail-item"><strong>שם מלא:</strong> ${userData.name}</div>
                 <div class="detail-item"><strong>אימייל:</strong> ${userData.email}</div>
               </div>
-              <p>מספר ימים לפני הסדנה, תקבל/י אימייל נוסף עם מידע מפורט יותר, כולל קישור למפגש (במידה ורלוונטי) וכל מה שצריך לדעת לקראת הסדנה.</p>
+              <p>מספר ימים לפני הסדנה, תקבל/י אימייל נוסף עם מידע מפורט יותר, כולל קישור למפגש וכל מה שצריך לדעת לקראת הסדנה.</p>
               <p>אם יש לך שאלות נוספות בינתיים, אל תהסס/י ליצור איתנו קשר.</p>
               <p style="text-align: center;">
                 <a href="https://www.kanewyork.com" class="cta-button">לאתר הראשי של CXpert AI</a>
