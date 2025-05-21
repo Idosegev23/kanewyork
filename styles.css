@@ -664,6 +664,144 @@ footer {
     color: rgba(13, 13, 13, 0.7);
 }
 
+/* Registration Confirmation Popup */
+.confirmation-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.confirmation-content {
+    background-color: var(--white);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: popIn 0.4s ease-out;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.confirmation-header {
+    position: relative;
+    padding: 20px;
+    text-align: center;
+    background-color: var(--cream);
+    border-bottom: 3px solid var(--gold);
+}
+
+.confirmation-logo {
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.close-popup {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--black);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-popup:hover {
+    color: var(--gold);
+}
+
+.confirmation-body {
+    padding: 30px;
+    text-align: center;
+}
+
+.confirmation-body h2 {
+    color: var(--gold);
+    margin-bottom: 10px;
+}
+
+.workshop-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.confirmation-details {
+    background-color: var(--cream);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-item strong {
+    display: inline-block;
+    min-width: 70px;
+    color: var(--black);
+}
+
+.confirmation-actions {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.add-to-calendar-btn,
+.close-btn {
+    padding: 10px 20px;
+    border-radius: 50px;
+    transition: var(--transition);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.add-to-calendar-btn {
+    background-color: var(--gold);
+    color: var(--white);
+    text-decoration: none;
+}
+
+.add-to-calendar-btn:hover {
+    background-color: #c4a129;
+    transform: translateY(-3px);
+}
+
+.close-btn {
+    background-color: var(--cream);
+    color: var(--black);
+    border: 2px solid var(--gold);
+}
+
+.close-btn:hover {
+    background-color: var(--gold);
+    color: var(--white);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     h1 {

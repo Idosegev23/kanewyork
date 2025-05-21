@@ -227,6 +227,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation and submission
     const form = document.getElementById('registration-form');
     form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Always prevent default to handle manually
+        
         const nameField = document.getElementById('name');
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
@@ -255,8 +257,53 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
         
-        if (!isValid) {
-            e.preventDefault();
+        if (isValid) {
+            // Prepare form data
+            const formData = new FormData(form);
+            const formDataObj = {};
+            formData.forEach((value, key) => {
+                formDataObj[key] = value;
+            });
+            
+            // Show loading indicator
+            const submitBtn = form.querySelector('.submit-button');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = currentLang === 'he' ? 'שולח...' : 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Send confirmation email directly to user without using Make.com
+            fetch('/send-confirmation-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formDataObj)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show confirmation popup
+                    showConfirmationPopup(formDataObj);
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    console.log('Email sent:', data);
+                } else {
+                    throw new Error(data.message || 'Failed to send email');
+                }
+            })
+            .catch(error => {
+                console.error('Form submission error:', error);
+                alert(currentLang === 'he' ? 
+                    'אירעה שגיאה בשליחת האימייל. אנא נסה שוב מאוחר יותר.' : 
+                    'There was an error sending the email. Please try again later.');
+            })
+            .finally(() => {
+                // Reset button
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+            });
         }
     });
     
@@ -271,5 +318,73 @@ document.addEventListener('DOMContentLoaded', function() {
     function isValidEmail(email) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
+    }
+    
+    // Show confirmation popup
+    function showConfirmationPopup(formData) {
+        const popup = document.getElementById('confirmation-popup');
+        const workshopName = popup.querySelector('.workshop-name');
+        const workshopDate = popup.querySelector('.workshop-date');
+        const addToCalendarBtn = popup.querySelector('.add-to-calendar-btn');
+        
+        // Find the workshop details
+        const selectedWorkshop = workshopDates.find(workshop => workshop.value === formData.workshop);
+        
+        if (selectedWorkshop) {
+            // Set workshop name
+            workshopName.textContent = formData.workshop;
+            
+            // Format date based on language
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            workshopDate.textContent = selectedWorkshop.date.toLocaleDateString(
+                currentLang === 'he' ? 'he-IL' : 'en-US', 
+                options
+            );
+            
+            // Create calendar links
+            const calendarUrl = generateCalendarLink(selectedWorkshop, formData.name);
+            addToCalendarBtn.href = calendarUrl;
+            
+            // Show popup
+            popup.style.display = 'flex';
+        }
+        
+        // Close popup event listeners
+        const closePopup = popup.querySelector('.close-popup');
+        const closeBtn = popup.querySelector('.close-btn');
+        
+        closePopup.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+        
+        // Close when clicking outside
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.style.display = 'none';
+            }
+        });
+    }
+    
+    // Generate calendar link
+    function generateCalendarLink(workshop, attendeeName) {
+        const date = workshop.date;
+        
+        // Format date for Google Calendar
+        const startDate = date.toISOString().replace(/-|:|\.\d+/g, '');
+        
+        // End time (2 hours after start)
+        const endDate = new Date(date.getTime() + 2 * 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, '');
+        
+        // Event details
+        const title = encodeURIComponent(`CXpert AI Workshop: ${workshop.title}`);
+        const description = encodeURIComponent(`Workshop details:\n${workshop.description}\n\nAttendee: ${attendeeName}`);
+        const location = encodeURIComponent('CXpert Innovation Center, Tel Aviv');
+        
+        // Google Calendar link
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${description}&location=${location}&sf=true&output=xml`;
     }
 }); 

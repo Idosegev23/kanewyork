@@ -233,7 +233,7 @@
     <section id="registration">
         <div class="container">
             <h2 data-en="Secure Your Spot" data-he="הבטח את מקומך">Secure Your Spot</h2>
-            <form id="registration-form" action="https://hook.eu2.make.com/4xskepi8nslj99x5vaihc0dif4kmk2t4" method="POST">
+            <form id="registration-form">
                 <div class="form-group">
                     <label for="name" data-en="Full Name" data-he="שם מלא">Full Name</label>
                     <input type="text" id="name" name="name" required>
@@ -291,5 +291,39 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <!-- Registration Confirmation Popup -->
+    <div id="confirmation-popup" class="confirmation-popup">
+        <div class="confirmation-content">
+            <div class="confirmation-header">
+                <img src="https://res.cloudinary.com/dsoh3yteb/image/upload/v1742806446/Logo2025_xbrzm3.png" alt="CXpert AI Logo" class="confirmation-logo">
+                <span class="close-popup">&times;</span>
+            </div>
+            <div class="confirmation-body">
+                <h2 data-en="Registration Confirmed!" data-he="ההרשמה אושרה!">Registration Confirmed!</h2>
+                <p data-en="Thank you for registering for" data-he="תודה שנרשמת לסדנת">Thank you for registering for</p>
+                <p class="workshop-name"></p>
+                <div class="confirmation-details">
+                    <div class="detail-item">
+                        <strong data-en="Date:" data-he="תאריך:">Date:</strong>
+                        <span class="workshop-date"></span>
+                    </div>
+                    <div class="detail-item">
+                        <strong data-en="Time:" data-he="שעה:">Time:</strong>
+                        <span data-en="10:00 AM EST (New Jersey time)" data-he="10:00 בבוקר (שעון ניו ג'רסי)">10:00 AM EST (New Jersey time)</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong data-en="Location:" data-he="מיקום:">Location:</strong>
+                        <span data-en="CXpert Innovation Center, Tel Aviv" data-he="מרכז החדשנות CXpert, תל אביב">CXpert Innovation Center, Tel Aviv</span>
+                    </div>
+                </div>
+                <p data-en="A confirmation email has been sent to your email address." data-he="אימייל אישור נשלח לכתובת הדואר האלקטרוני שלך.">A confirmation email has been sent to your email address.</p>
+                <div class="confirmation-actions">
+                    <a href="#" class="add-to-calendar-btn" data-en="Add to Calendar" data-he="הוסף ליומן">Add to Calendar</a>
+                    <button class="close-btn" data-en="Close" data-he="סגור">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 
