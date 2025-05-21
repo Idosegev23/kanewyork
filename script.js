@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Workshop dates data - all Sundays at 10:00 AM EST
     const workshopDates = [
         { date: new Date(2025, 5, 1), title: 'Exposure Workshop', price: 'Free', type: 'free', description: 'Practical tools and AI overview', value: 'June 1 – Exposure' },
-        { date: new Date(2025, 5, 8), title: 'Repeat Exposure', price: '₪100', type: 'paid', description: 'For those who missed the first session', value: 'June 8 – Repeat Exposure' },
+        { date: new Date(2025, 5, 10), title: 'Repeat Exposure', price: '₪100', type: 'paid', description: 'For those who missed the first session', value: 'June 10 – Repeat Exposure' },
         { date: new Date(2025, 6, 6), title: 'Advanced Workshop', price: '₪100', type: 'paid', description: 'Deep dive into real AI workflows', value: 'July 6 – Advanced' },
         { date: new Date(2025, 7, 3), title: 'Advanced Workshop', price: '₪100', type: 'paid', description: 'Automation and advanced use cases', value: 'August 3 – Advanced' },
         { date: new Date(2025, 8, 7), title: 'Advanced Workshop', price: '₪100', type: 'paid', description: 'Implementation and strategy', value: 'September 7 – Advanced' }
